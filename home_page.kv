@@ -1,0 +1,186 @@
+
+#: import StiffScrollEffect kivymd.effects.stiffscroll.StiffScrollEffect
+#: import Clock kivy.clock.Clock
+
+
+
+<RoomGadgetSwitchItem>:
+    size_hint: 0.8, None
+    height: self.minimum_height
+    pos_hint: {"center_x": 0.5}
+    MDLabel:
+        text: root.gadget.name
+        font_style: "H6"
+    MDLabel:
+        id: label
+        text: root.gadget.state
+        font_size: "13dp"
+        theme_text_color: "Custom"
+        text_color: [0.5, 0.5, 0.5, 1]
+    MDSwitch:
+        id: switch
+        active: label.text == "on"
+        on_active:
+            label.text = "on" if self.active else "off"
+            root.gadget.state = "on" if switch.active else "off"
+
+
+<RoomGadgetRegulateItem>:
+    size_hint: 0.8, None
+    height: 48
+    pos_hint: {"center_x": 0.5}
+    MDLabel:
+        id: label
+        text: root.gadget.name
+        font_style: "H6"
+        size_hint_x: 0.33
+    MDSlider:
+        id: slider
+        hint: False
+        min: 0
+        max: 100
+        value: root.gadget.state
+
+<HouseListItem>:
+    orientation: "vertical"
+    style: "outlined"
+    line_color: 0, 0, 0, 0.1
+    line_width: 1.5
+    size_hint: 0.9, None
+    pos_hint: {"center_x": 0.5}
+    #height: self.minimum_height
+    MDLabel:
+        text: root.gadget.name.title()
+        halign: "center"
+        font_style: "H5"
+    MDSeparator:
+        height: 2
+        line_color: 0, 0, 0, 0.1
+
+    MDBoxLayout:
+        MDLabel:
+            id: label
+            text: root.gadget.state
+            halign: "right"
+            font_size: "13dp"
+            theme_text_color: "Custom"
+            text_color: [0.5, 0.5, 0.5, 1]
+
+        RelativeLayout:
+            MDSwitch:
+                id: switch
+                pos_hint: {"center_x": 0.5}
+                active: root.gadget.state == "on"
+                on_active:
+                    root.gadget.state = "on" if self.active else "off"
+                    label.text = root.gadget.state
+
+
+<CustomExpansionPanel>:
+    orientation: "vertical"
+    style: "outlined"
+    line_color: 0, 0, 0, 0.1
+    line_height: 32
+    line_width: 1.5
+    size_hint: 0.9, None
+    pos_hint: {"center_x": 0.5}
+    height: self.minimum_height
+
+    MDBoxLayout:
+        id: top_panel
+        size_hint: 1, None
+        height: self.minimum_height
+        MDLabel:
+            text: root.text
+            font_style: "H5"
+            halign: "center"
+        MDRelativeLayout:
+            size_hint: 0.3, None
+            height: icon_button.height
+            MDIconButton:
+                id: icon_button
+                pos_hint: {"center_x": 0.5}
+                icon: "chevron-double-down" if root.panel_state == "closed" else "chevron-double-up"
+                on_release: root.update_panel()
+
+
+
+<BaseCard>:
+    orientation: "vertical"
+    elevation: 3
+    radius: 15
+    padding: 20
+    ScrollView:
+        effect_cls: StiffScrollEffect
+        always_overscroll: False
+        GridLayout:
+            id: card
+            cols: 1
+            adaptive_height: True
+            size_hint_y: None
+            height: self.minimum_height
+            padding: 4
+            spacing: 4
+
+
+<BottomNavButton@BoxLayout>:
+    text: ""
+    icon: ""
+    selected: False
+    callback: lambda x : x
+    size_hint: 0.25, 0.8
+    pos_hint: {"center_y": 0.5}
+    orientation: "vertical"
+    MDIconButton:
+        icon: root.icon
+        user_font_size: "56dp"
+        theme_text_color: "Custom"
+        text_color: [1, 0, 0, 1] if root.selected else [0, 0, 0, 1]
+        pos_hint: {"center_x": 0.5}
+        on_release: root.callback(root.text)
+    MDLabel:
+        text: root.text
+        halign: "center"
+        pos_hint: {"center_x": 0.5}
+        font_size: 12
+        theme_text_color: "Custom"
+        text_color: [1, 0, 0, 0.3] if root.selected else [0, 0, 0, 0.3]
+
+
+<HomePage>:
+    bottom: 20
+    pad: 20
+
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: 30
+        spacing: 30
+
+        MDRelativeLayout:
+            id: card
+
+        MDCard:
+            id: bottom_nav
+            size_hint_y: 0.1
+            elevation: 3
+            radius: 15
+            MDRelativeLayout:
+                BottomNavButton:
+                    id: house
+                    icon: "home-automation"
+                    text: "house"
+                    callback: root.set_current
+
+                BottomNavButton:
+                    id: rooms
+                    icon: "door-sliding"
+                    text: "rooms"
+                    x: (bottom_nav.width - self.width) / 2
+                    callback: root.set_current
+
+                BottomNavButton:
+                    id: schedules
+                    icon: "clock-edit-outline"
+                    text: "schedules"
+                    x: bottom_nav.width - self.width
+                    callback: root.set_current

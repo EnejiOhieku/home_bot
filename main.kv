@@ -1,0 +1,32 @@
+#: import HomePage home_page.HomePage
+
+<HomeBotRootWidget>:
+    orientation: "vertical"
+    MDTopAppBar:
+        id: toolbar
+        pos_hint: {"top": 1}
+        elevation: 3
+        title: "[size=30]HomeBot[/size]"
+        md_bg_color: 0.9, 0.9, 0.9, 1
+        specific_text_color: 0.1, 0.1, 0.1, 1
+        anchor_title: "center"
+        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+        right_action_items: [["dots-vertical", print]]
+
+    MDNavigationLayout:
+
+        ScreenManager:
+            id: screen_manager
+            Screen:
+                name: "loading"
+                MDSpinner:
+                    size_hint: None, None
+                    size: 64, 64
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+            HomePage:
+                name: "home_page"
+
+
+        MDNavigationDrawer:
+            id: nav_drawer
